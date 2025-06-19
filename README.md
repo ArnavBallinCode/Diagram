@@ -171,10 +171,10 @@ graph TB
         end
         
         subgraph "4 Scheduled Interval Jobs"
-            HOURLY_JOB["🕐 HOURLY_QUEUE<br/>every: 3,600,000ms<br/>(1 hour)"]
-            THREE_HOURLY_JOB["🕒 THREE_HOURLY_QUEUE<br/>every: 10,800,000ms<br/>(3 hours)"]
-            SIX_HOURLY_JOB["🕕 SIX_HOURLY_QUEUE<br/>every: 21,600,000ms<br/>(6 hours)"]
-            TWELVE_HOURLY_JOB["🕛 TWELVE_HOURLY_QUEUE<br/>every: 43,200,000ms<br/>(12 hours)"]
+            HOURLY_JOB[HOURLY_QUEUE<br/>every: 3,600,000ms<br/>1 hour]
+            THREE_HOURLY_JOB[THREE_HOURLY_QUEUE<br/>every: 10,800,000ms<br/>3 hours]
+            SIX_HOURLY_JOB[SIX_HOURLY_QUEUE<br/>every: 21,600,000ms<br/>6 hours]
+            TWELVE_HOURLY_JOB[TWELVE_HOURLY_QUEUE<br/>every: 43,200,000ms<br/>12 hours]
         end
         
         subgraph "Queue Workers"
@@ -185,9 +185,9 @@ graph TB
 
     subgraph "Firebase Integration"
         subgraph "Firebase Functions"
-            GET_NOTIFICATIONS[getHourlyNotifications()]
-            GROUP_NOTIFICATIONS[groupNotificationsByUserAndSubgroup()]
-            SEND_GROUPED[sendGroupedNotifications()]
+            GET_NOTIFICATIONS[getHourlyNotifications]
+            GROUP_NOTIFICATIONS[groupNotificationsByUserAndSubgroup]
+            SEND_GROUPED[sendGroupedNotifications]
         end
         
         subgraph "Firebase Firestore"
@@ -523,11 +523,11 @@ graph TB
             HEALTH_MONITOR[Health Check Every 25s]
         end
         
-        subgraph "Interval Queues (4 Types)"
-            QUEUE_1HR["⏰ 1-Hour Queue<br/>📅 Schedule: Every 3,600,000ms<br/>🎯 Target: NotificationInterval.ONE<br/>🔄 Repeating Job"]
-            QUEUE_3HR["⏰ 3-Hour Queue<br/>📅 Schedule: Every 10,800,000ms<br/>🎯 Target: NotificationInterval.THREE<br/>🔄 Repeating Job"]
-            QUEUE_6HR["⏰ 6-Hour Queue<br/>📅 Schedule: Every 21,600,000ms<br/>🎯 Target: NotificationInterval.SIX<br/>🔄 Repeating Job"]
-            QUEUE_12HR["⏰ 12-Hour Queue<br/>📅 Schedule: Every 43,200,000ms<br/>🎯 Target: NotificationInterval.TWELVE<br/>🔄 Repeating Job"]
+        subgraph "Interval Queues - 4 Types"
+            QUEUE_1HR[1-Hour Queue<br/>Schedule: Every 3,600,000ms<br/>Target: NotificationInterval.ONE<br/>Repeating Job]
+            QUEUE_3HR[3-Hour Queue<br/>Schedule: Every 10,800,000ms<br/>Target: NotificationInterval.THREE<br/>Repeating Job]
+            QUEUE_6HR[6-Hour Queue<br/>Schedule: Every 21,600,000ms<br/>Target: NotificationInterval.SIX<br/>Repeating Job]
+            QUEUE_12HR[12-Hour Queue<br/>Schedule: Every 43,200,000ms<br/>Target: NotificationInterval.TWELVE<br/>Repeating Job]
         end
         
         subgraph "Notification Processing Queue"
@@ -538,9 +538,9 @@ graph TB
 
     subgraph "Firebase Firestore Integration"
         subgraph "Data Operations"
-            QUERY_NOTIFICATIONS[getHourlyNotifications(interval)]
-            GROUP_BY_USER[groupNotificationsByUserAndSubgroup()]
-            BATCH_PROCESSING[Batch Insert & Update]
+            QUERY_NOTIFICATIONS[getHourlyNotifications interval]
+            GROUP_BY_USER[groupNotificationsByUserAndSubgroup]
+            BATCH_PROCESSING[Batch Insert and Update]
             STATUS_TRACKING[Status Updates]
         end
         
@@ -615,10 +615,10 @@ flowchart TD
     end
 
     subgraph "Queue Job Scheduling"
-        A6 --> B1["🕐 intervalQueue.add(HOURLY_QUEUE)<br/>repeat: every 3600000ms"]
-        A6 --> B2["🕒 intervalQueue.add(THREE_HOURLY_QUEUE)<br/>repeat: every 10800000ms"]
-        A6 --> B3["🕕 intervalQueue.add(SIX_HOURLY_QUEUE)<br/>repeat: every 21600000ms"]
-        A6 --> B4["🕛 intervalQueue.add(TWELVE_HOURLY_QUEUE)<br/>repeat: every 43200000ms"]
+        A6 --> B1[intervalQueue.add HOURLY_QUEUE<br/>repeat: every 3600000ms]
+        A6 --> B2[intervalQueue.add THREE_HOURLY_QUEUE<br/>repeat: every 10800000ms]
+        A6 --> B3[intervalQueue.add SIX_HOURLY_QUEUE<br/>repeat: every 21600000ms]
+        A6 --> B4[intervalQueue.add TWELVE_HOURLY_QUEUE<br/>repeat: every 43200000ms]
     end
 
     subgraph "Worker Processing Logic"
@@ -629,10 +629,10 @@ flowchart TD
         
         C1 --> C2{Switch on job.data.name}
         
-        C2 -->|HOURLY_QUEUE| D1[getHourlyNotifications(ONE)]
-        C2 -->|THREE_HOURLY_QUEUE| D2[getHourlyNotifications(THREE)]
-        C2 -->|SIX_HOURLY_QUEUE| D3[getHourlyNotifications(SIX)]
-        C2 -->|TWELVE_HOURLY_QUEUE| D4[getHourlyNotifications(TWELVE)]
+        C2 -->|HOURLY_QUEUE| D1[getHourlyNotifications ONE]
+        C2 -->|THREE_HOURLY_QUEUE| D2[getHourlyNotifications THREE]
+        C2 -->|SIX_HOURLY_QUEUE| D3[getHourlyNotifications SIX]
+        C2 -->|TWELVE_HOURLY_QUEUE| D4[getHourlyNotifications TWELVE]
     end
 
     subgraph "Firebase Processing Pipeline"
@@ -641,8 +641,8 @@ flowchart TD
         D3 --> E1
         D4 --> E1
         
-        E1 --> E2[groupNotificationsByUserAndSubgroup()]
-        E2 --> E3[sendGroupedNotifications()]
+        E1 --> E2[groupNotificationsByUserAndSubgroup]
+        E2 --> E3[sendGroupedNotifications]
         E3 --> E4[Add individual jobs to notification-queue]
     end
 
@@ -650,15 +650,15 @@ flowchart TD
         E4 --> F1[notification-queue workers]
         F1 --> F2{Notification Type}
         
-        F2 -->|SMS| G1[SmsService.sendSms()]
-        F2 -->|WhatsApp| G2[WhatsappService.sendWhatsapp()]
-        F2 -->|Email| G3[EmailService.sendEmail()]
+        F2 -->|SMS| G1[SmsService.sendSms]
+        F2 -->|WhatsApp| G2[WhatsappService.sendWhatsapp]
+        F2 -->|Email| G3[EmailService.sendEmail]
         
         G1 --> H1[MSG91 SMS API Call]
         G2 --> H2[MSG91 WhatsApp API Call]
-        G3 --> H3[Gupshup/Gmail API Call]
+        G3 --> H3[Gupshup Gmail API Call]
         
-        H1 --> I1[updateNotificationStatus()]
+        H1 --> I1[updateNotificationStatus]
         H2 --> I1
         H3 --> I1
         
