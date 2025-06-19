@@ -1,3 +1,4 @@
+# PaperLite Communication Service 2.0
 
 A robust, scalable microservice for handling multi-channel communications (SMS, WhatsApp, Email) with queue-based processing, Firebase integration, and comprehensive monitoring.
 
