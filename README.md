@@ -279,14 +279,14 @@ sequenceDiagram
     Note over Redis,ExtAPI: Queue Processing Cycle (Repeats every interval)
     
     Redis->>Worker: Trigger Interval Job
-    Worker->>Firebase: getHourlyNotifications(interval)
+    Worker->>Firebase: getHourlyNotifications interval
     Firebase->>Firestore: Query notifications by interval
     Firestore-->>Firebase: Return matching notifications
     
-    Firebase->>Firebase: groupNotificationsByUserAndSubgroup()
+    Firebase->>Firebase: groupNotificationsByUserAndSubgroup
     Note over Firebase: Group notifications to reduce spam
     
-    Firebase->>Firebase: sendGroupedNotifications()
+    Firebase->>Firebase: sendGroupedNotifications
     
     loop For each grouped notification
         Firebase->>NotifQueue: Add individual notification job
@@ -359,62 +359,62 @@ graph TB
     subgraph "Redis Queue Configuration"
         subgraph "Connection Config"
             REDIS_URL[Redis URL]
-            REDIS_HOST[Host: parsedUrl.hostname]
-            REDIS_PORT[Port: parsedUrl.port]
-            REDIS_PASSWORD[Password: parsedUrl.password]
-            CONNECT_TIMEOUT[connectTimeout: 10000ms]
+            REDIS_HOST[Host parsedUrl.hostname]
+            REDIS_PORT[Port parsedUrl.port]
+            REDIS_PASSWORD[Password parsedUrl.password]
+            CONNECT_TIMEOUT[connectTimeout 10000ms]
         end
         
         subgraph "Queue Settings"
-            MAX_RETRIES[maxRetriesPerRequest: null]
-            KEEP_ALIVE[keepAlive: 30000ms]
-            RETRY_STRATEGY[Retry Strategy: exponential]
-            RECONNECT_ERROR[reconnectOnError: ECONNRESET]
+            MAX_RETRIES[maxRetriesPerRequest null]
+            KEEP_ALIVE[keepAlive 30000ms]
+            RETRY_STRATEGY[Retry Strategy exponential]
+            RECONNECT_ERROR[reconnectOnError ECONNRESET]
         end
     end
 
     subgraph "4 Interval Queue Jobs"
-        subgraph "Job 1: Hourly"
-            H1[Name: HOURLY_QUEUE]
-            H2[Interval: 3,600,000ms]
-            H3[Target: NotificationInterval.ONE]
-            H4[Cron: Every 1 hour]
+        subgraph "Job 1 Hourly"
+            H1[Name HOURLY_QUEUE]
+            H2[Interval 3,600,000ms]
+            H3[Target NotificationInterval.ONE]
+            H4[Cron Every 1 hour]
         end
         
-        subgraph "Job 2: Three Hourly"
-            T1[Name: THREE_HOURLY_QUEUE]
-            T2[Interval: 10,800,000ms]
-            T3[Target: NotificationInterval.THREE]
-            T4[Cron: Every 3 hours]
+        subgraph "Job 2 Three Hourly"
+            T1[Name THREE_HOURLY_QUEUE]
+            T2[Interval 10,800,000ms]
+            T3[Target NotificationInterval.THREE]
+            T4[Cron Every 3 hours]
         end
         
-        subgraph "Job 3: Six Hourly"
-            S1[Name: SIX_HOURLY_QUEUE]
-            S2[Interval: 21,600,000ms]
-            S3[Target: NotificationInterval.SIX]
-            S4[Cron: Every 6 hours]
+        subgraph "Job 3 Six Hourly"
+            S1[Name SIX_HOURLY_QUEUE]
+            S2[Interval 21,600,000ms]
+            S3[Target NotificationInterval.SIX]
+            S4[Cron Every 6 hours]
         end
         
-        subgraph "Job 4: Twelve Hourly"
-            TW1[Name: TWELVE_HOURLY_QUEUE]
-            TW2[Interval: 43,200,000ms]
-            TW3[Target: NotificationInterval.TWELVE]
-            TW4[Cron: Every 12 hours]
+        subgraph "Job 4 Twelve Hourly"
+            TW1[Name TWELVE_HOURLY_QUEUE]
+            TW2[Interval 43,200,000ms]
+            TW3[Target NotificationInterval.TWELVE]
+            TW4[Cron Every 12 hours]
         end
     end
 
     subgraph "Worker Configuration"
-        WORKER_CONCURRENCY[Concurrency: 5]
-        WORKER_ATTEMPTS[Attempts: 3]
-        WORKER_BACKOFF[Backoff: exponential, 1000ms]
-        WORKER_CONNECTION[Connection: REDIS_CONFIG]
+        WORKER_CONCURRENCY[Concurrency 5]
+        WORKER_ATTEMPTS[Attempts 3]
+        WORKER_BACKOFF[Backoff exponential 1000ms]
+        WORKER_CONNECTION[Connection REDIS_CONFIG]
     end
 
     subgraph "Firebase Processing"
-        FB_GET[getHourlyNotifications(interval)]
-        FB_GROUP[groupNotificationsByUserAndSubgroup()]
-        FB_SEND[sendGroupedNotifications()]
-        FB_UPDATE[updateNotificationStatus()]
+        FB_GET[getHourlyNotifications interval]
+        FB_GROUP[groupNotificationsByUserAndSubgroup]
+        FB_SEND[sendGroupedNotifications]
+        FB_UPDATE[updateNotificationStatus]
     end
 
     %% Connections
