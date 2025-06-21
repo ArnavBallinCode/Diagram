@@ -4,275 +4,170 @@
 
 Campus Dabba is a modern full-stack web application built with Next.js 14, TypeScript, and Supabase that connects students with local home cooks for authentic, homemade meal delivery. The platform supports three distinct user roles with role-based access control and real-time features.
 
-## 🎯 High-Level System Architecture
+## 🎯 Actual System Architecture (What You Really Have)
 
 ```mermaid
 graph TB
-    subgraph "Client Tier"
-        WEB[Next.js 14 Web App]
-        MOBILE[React Native App<br/>Future Implementation]
-        PWA[Progressive Web App<br/>Mobile Optimized]
+    subgraph "Frontend Layer"
+        WEB[Next.js 14 Web App<br/>React + TypeScript]
+        MOBILE[Future: React Native<br/>Not Implemented Yet]
     end
     
-    subgraph "Edge/CDN Layer"
-        CDN[Content Delivery Network<br/>Static Assets & Images]
-        EDGE[Edge Functions<br/>Geo-distributed Logic]
+    subgraph "Middleware & Routing"
+        MW[Next.js Middleware<br/>Session Management]
+        ROUTER[App Router<br/>File-based Routing]
+        API[API Routes<br/>Serverless Functions]
     end
     
-    subgraph "Application Tier"
-        MW[Next.js Middleware<br/>Auth & Route Protection]
-        API[API Routes<br/>Business Logic]
-        SSR[Server-Side Rendering<br/>SEO & Performance]
+    subgraph "Supabase Backend"
+        AUTH[Supabase Auth<br/>JWT + Session]
+        DB[(PostgreSQL<br/>with RLS Policies)]
+        STORAGE[Supabase Storage<br/>File Upload]
+        REALTIME[Supabase Realtime<br/>Live Subscriptions]
     end
     
-    subgraph "Backend Services"
-        SUPABASE[Supabase Pro Platform]
-        PAYMENT[Payment Gateway]
-        AI[AI/ML Services]
-        NOTIFY[Notification Service]
+    subgraph "External Services"
+        RAZORPAY[Razorpay Payment API<br/>Payment Processing]
+        MAPS[Google Maps API<br/>Location Services]
+        EMAIL[Email Verification<br/>Built into Supabase]
     end
     
-    subgraph "Data Tier"
-        DB[(PostgreSQL Database<br/>Primary Data Store)]
-        CACHE[(Redis Cache<br/>Session & Temp Data)]
-        STORAGE[(Object Storage<br/>Files & Media)]
+    subgraph "User Interfaces"
+        STUDENT[Student Pages<br/>Browse & Order]
+        COOK[Cook Dashboard<br/>Menu & Orders]
+        ADMIN[Admin Panel<br/>Platform Management]
     end
     
-    subgraph "External APIs"
-        RAZORPAY[Razorpay Payment API]
-        MAPS[Google Maps API]
-        EMAIL[Email Service Provider]
-        SMS[SMS Gateway]
-    end
+    WEB --> MW
+    MW --> ROUTER
+    ROUTER --> API
+    API --> AUTH
+    API --> DB
+    API --> STORAGE
+    API --> REALTIME
     
-    WEB --> CDN
-    MOBILE --> CDN
-    CDN --> MW
-    MW --> API
-    MW --> SSR
-    API --> SUPABASE
-    SUPABASE --> DB
-    SUPABASE --> CACHE
-    SUPABASE --> STORAGE
-    
-    API --> PAYMENT
-    API --> AI
-    API --> NOTIFY
-    
-    PAYMENT --> RAZORPAY
+    API --> RAZORPAY
     API --> MAPS
-    NOTIFY --> EMAIL
-    NOTIFY --> SMS
+    AUTH --> EMAIL
     
-    EDGE -.-> API
+    WEB --> STUDENT
+    WEB --> COOK
+    WEB --> ADMIN
 ```
 
-## 🖥️ Advanced Frontend Architecture
+## 🖥️ Frontend Architecture (What You Actually Built)
 
 ```mermaid
 graph TB
-    subgraph "App Router Structure"
-        ROOT[app/layout.tsx<br/>Root Layout]
-        STATIC[app/static/<br/>Marketing Pages]
-        AUTH[app/auth/<br/>Authentication]
-        STUDENT[app/student/<br/>Student Features]
-        COOK[app/cook/<br/>Cook Features]
-        ADMIN[app/admin/<br/>Admin Panel]
-        API[app/api/<br/>API Routes]
+    subgraph "Next.js 14 App Structure"
+        ROOT[app/layout.tsx<br/>Root Layout + Providers]
+        PAGES[Page Components<br/>Student/Cook/Admin]
+        API_ROUTES[app/api/*<br/>Serverless Functions]
     end
     
     subgraph "Component Architecture"
-        PROVIDERS[Context Providers<br/>Auth, Cart, Theme]
-        LAYOUTS[Layout Components<br/>Navigation, Headers]
-        SHARED[Shared Components<br/>UI, Forms, Modals]
-        ROLE_COMPONENTS[Role-Specific Components]
-        UI_LIB[UI Library<br/>shadcn/ui Components]
+        PROVIDERS[React Context Providers<br/>Auth, Cart, Theme]
+        SHARED[Shared Components<br/>UI Components]
+        ROLE_SPECIFIC[Role-Based Components<br/>Student/Cook/Admin]
+        UI_LIB[ShadCN/UI Components<br/>Radix + Tailwind]
     end
     
     subgraph "State Management"
         CONTEXT[React Context<br/>Global State]
-        HOOKS[Custom Hooks<br/>Business Logic]
-        FORMS[React Hook Form<br/>Form State]
-        CACHE[SWR/React Query<br/>Server State]
+        HOOKS[Custom Hooks<br/>use-auth, use-cart]
+        FORMS[React Hook Form<br/>Form Management]
+        LOCAL_STATE[Component State<br/>useState/useEffect]
     end
     
-    subgraph "Student Interface"
-        S_BROWSE[Browse Cooks<br/>Search & Filter]
-        S_MENU[Menu Viewer<br/>Items & Details]
-        S_CART[Shopping Cart<br/>Order Management]
-        S_CHECKOUT[Checkout Flow<br/>Payment Process]
-        S_ORDERS[Order History<br/>Tracking & Rating]
-        S_PROFILE[Profile Management<br/>Settings & Preferences]
-    end
-    
-    subgraph "Cook Interface"
-        C_REGISTER[Registration Flow<br/>Multi-step Onboarding]
-        C_MENU[Menu Management<br/>CRUD Operations]
-        C_ORDERS[Order Dashboard<br/>Status Management]
-        C_ANALYTICS[Analytics View<br/>Earnings & Stats]
-        C_PROFILE[Profile Settings<br/>Business Details]
-        C_PAYMENTS[Payment Tracking<br/>Transaction History]
-    end
-    
-    subgraph "Admin Interface"
-        A_DASHBOARD[Admin Dashboard<br/>System Overview]
-        A_USERS[User Management<br/>Students & Cooks]
-        A_ORDERS[Order Oversight<br/>All Transactions]
-        A_ANALYTICS[Business Analytics<br/>KPIs & Reports]
-        A_SETTINGS[System Settings<br/>Configuration]
-        A_PAYMENTS[Payment Management<br/>Financial Oversight]
-    end
-    
-    subgraph "Real-time Features"
-        RT_ORDERS[Live Order Updates<br/>WebSocket/SSE]
-        RT_NOTIFICATIONS[Push Notifications<br/>Browser & Mobile]
-        RT_CHAT[AI Chatbot<br/>Customer Support]
-        RT_TRACKING[Order Tracking<br/>Live Status Updates]
+    subgraph "Actual Pages You Have"
+        S_BROWSE[app/browse/page.tsx<br/>Browse Cooks]
+        S_CART[app/cart/page.tsx<br/>Shopping Cart]
+        S_CHECKOUT[app/checkout/page.tsx<br/>Checkout Flow]
+        S_ORDERS[app/orders/page.tsx<br/>Order History]
+        
+        C_DASHBOARD[app/cook/dashboard/<br/>Cook Dashboard]
+        C_MENU[app/cook/menu/<br/>Menu Management]
+        C_ORDERS[app/cook/orders/<br/>Order Management]
+        C_REGISTER[app/cook/register/<br/>Registration Flow]
+        
+        A_DASHBOARD[app/admin/dashboard/<br/>Admin Overview]
+        A_USERS[app/admin/users/<br/>User Management]
+        A_COOKS[app/admin/cooks/<br/>Cook Management]
+        A_ORDERS[app/admin/orders/<br/>Order Oversight]
     end
     
     ROOT --> PROVIDERS
-    PROVIDERS --> LAYOUTS
-    LAYOUTS --> SHARED
-    SHARED --> ROLE_COMPONENTS
-    ROLE_COMPONENTS --> UI_LIB
-    
-    STUDENT --> S_BROWSE
-    STUDENT --> S_MENU
-    STUDENT --> S_CART
-    STUDENT --> S_CHECKOUT
-    STUDENT --> S_ORDERS
-    STUDENT --> S_PROFILE
-    
-    COOK --> C_REGISTER
-    COOK --> C_MENU
-    COOK --> C_ORDERS
-    COOK --> C_ANALYTICS
-    COOK --> C_PROFILE
-    COOK --> C_PAYMENTS
-    
-    ADMIN --> A_DASHBOARD
-    ADMIN --> A_USERS
-    ADMIN --> A_ORDERS
-    ADMIN --> A_ANALYTICS
-    ADMIN --> A_SETTINGS
-    ADMIN --> A_PAYMENTS
+    PROVIDERS --> SHARED
+    SHARED --> ROLE_SPECIFIC
+    ROLE_SPECIFIC --> UI_LIB
     
     CONTEXT --> HOOKS
     HOOKS --> FORMS
-    FORMS --> CACHE
+    FORMS --> LOCAL_STATE
     
-    RT_ORDERS --> S_ORDERS
-    RT_ORDERS --> C_ORDERS
-    RT_NOTIFICATIONS --> STUDENT
-    RT_NOTIFICATIONS --> COOK
-    RT_CHAT --> STUDENT
-    RT_TRACKING --> S_ORDERS
+    PAGES --> S_BROWSE
+    PAGES --> S_CART
+    PAGES --> S_CHECKOUT
+    PAGES --> S_ORDERS
+    PAGES --> C_DASHBOARD
+    PAGES --> C_MENU
+    PAGES --> C_ORDERS
+    PAGES --> C_REGISTER
+    PAGES --> A_DASHBOARD
+    PAGES --> A_USERS
+    PAGES --> A_COOKS
+    PAGES --> A_ORDERS
 ```
 
-## 🏗️ Advanced Backend Architecture
+## 🏗️ Backend Architecture (What's Actually There)
 
 ```mermaid
 graph TB
-    subgraph "API Gateway Layer"
-        MIDDLEWARE[Next.js Middleware<br/>Auth & Rate Limiting]
-        ROUTER[API Router<br/>Route Handling]
-        CORS[CORS Handler<br/>Cross-Origin Security]
-        VALIDATOR[Request Validator<br/>Input Sanitization]
+    subgraph "Next.js API Layer"
+        MIDDLEWARE[middleware.ts<br/>Route Protection]
+        ADMIN_API[app/api/admin/<br/>Admin Operations]
+        PAYMENT_API[app/api/razorpay/<br/>Payment Processing]
+        EMAIL_API[app/api/verify-email.ts<br/>Email Verification]
     end
     
-    subgraph "Business Logic Layer"
-        AUTH_SERVICE[Authentication Service<br/>JWT & Session Management]
-        USER_SERVICE[User Service<br/>Profile & Role Management]
-        ORDER_SERVICE[Order Service<br/>Order Processing Logic]
-        PAYMENT_SERVICE[Payment Service<br/>Transaction Processing]
-        MENU_SERVICE[Menu Service<br/>Menu & Inventory Management]
-        NOTIFICATION_SERVICE[Notification Service<br/>Real-time Communications]
-        ANALYTICS_SERVICE[Analytics Service<br/>Data Processing & Reports]
-    end
-    
-    subgraph "Data Access Layer"
-        SUPABASE_CLIENT[Supabase Client<br/>Database Operations]
-        ADMIN_CLIENT[Admin Client<br/>Privileged Operations]
-        REALTIME_CLIENT[Realtime Client<br/>Live Subscriptions]
-        STORAGE_CLIENT[Storage Client<br/>File Operations]
+    subgraph "Supabase Services"
+        CLIENT[Supabase Client<br/>Client-side Operations]
+        SERVER[Supabase Server<br/>Server-side Operations]
+        ADMIN_CLIENT[Supabase Admin<br/>Service Role Client]
+        MIDDLEWARE_CLIENT[Supabase Middleware<br/>Session Updates]
     end
     
     subgraph "Database Layer"
-        POSTGRES[(PostgreSQL<br/>Primary Database)]
-        RLS[Row Level Security<br/>Access Control]
+        POSTGRES[(PostgreSQL Database<br/>15+ Tables)]
+        RLS[Row Level Security<br/>User-based Access]
         TRIGGERS[Database Triggers<br/>Auto-calculations]
-        INDEXES[Optimized Indexes<br/>Query Performance]
-        FUNCTIONS[Stored Functions<br/>Complex Operations]
+        FUNCTIONS[Stored Functions<br/>is_admin, etc.)]
     end
     
-    subgraph "External Integration Layer"
-        RAZORPAY_API[Razorpay Integration<br/>Payment Gateway]
-        MAPS_API[Google Maps API<br/>Location Services]
-        EMAIL_API[Email Service<br/>Transactional Emails]
-        SMS_API[SMS Gateway<br/>OTP & Notifications]
-        AI_API[AI/ML APIs<br/>Chatbot & Analytics]
+    subgraph "File Structure You Actually Have"
+        UTILS[utils/supabase/<br/>Client Configurations]
+        LIB[lib/supabase-admin.ts<br/>Admin Operations]
+        RAZORPAY_UTILS[utils/razorpay.ts<br/>Payment Utilities]
+        TYPES[types/<br/>TypeScript Definitions]
     end
     
-    subgraph "Caching & Performance"
-        REDIS[(Redis Cache<br/>Session & Temporary Data)]
-        CDN[CDN Integration<br/>Static Asset Delivery]
-        COMPRESSION[Response Compression<br/>Performance Optimization]
-        MONITORING[Performance Monitoring<br/>APM & Logging]
-    end
+    MIDDLEWARE --> CLIENT
+    ADMIN_API --> ADMIN_CLIENT
+    PAYMENT_API --> SERVER
+    EMAIL_API --> SERVER
     
-    subgraph "Security Layer"
-        ENCRYPTION[Data Encryption<br/>At Rest & In Transit]
-        SECRETS[Secret Management<br/>Environment Variables]
-        AUDIT[Audit Logging<br/>Security Monitoring]
-        FIREWALL[Application Firewall<br/>Attack Protection]
-    end
-    
-    MIDDLEWARE --> ROUTER
-    ROUTER --> CORS
-    CORS --> VALIDATOR
-    VALIDATOR --> AUTH_SERVICE
-    
-    AUTH_SERVICE --> USER_SERVICE
-    AUTH_SERVICE --> ORDER_SERVICE
-    AUTH_SERVICE --> PAYMENT_SERVICE
-    AUTH_SERVICE --> MENU_SERVICE
-    AUTH_SERVICE --> NOTIFICATION_SERVICE
-    AUTH_SERVICE --> ANALYTICS_SERVICE
-    
-    USER_SERVICE --> SUPABASE_CLIENT
-    ORDER_SERVICE --> SUPABASE_CLIENT
-    PAYMENT_SERVICE --> ADMIN_CLIENT
-    MENU_SERVICE --> SUPABASE_CLIENT
-    NOTIFICATION_SERVICE --> REALTIME_CLIENT
-    ANALYTICS_SERVICE --> ADMIN_CLIENT
-    
-    SUPABASE_CLIENT --> POSTGRES
+    CLIENT --> POSTGRES
+    SERVER --> POSTGRES
     ADMIN_CLIENT --> POSTGRES
-    REALTIME_CLIENT --> POSTGRES
-    STORAGE_CLIENT --> POSTGRES
+    MIDDLEWARE_CLIENT --> POSTGRES
     
     POSTGRES --> RLS
     POSTGRES --> TRIGGERS
-    POSTGRES --> INDEXES
     POSTGRES --> FUNCTIONS
     
-    PAYMENT_SERVICE --> RAZORPAY_API
-    USER_SERVICE --> MAPS_API
-    NOTIFICATION_SERVICE --> EMAIL_API
-    NOTIFICATION_SERVICE --> SMS_API
-    ANALYTICS_SERVICE --> AI_API
-    
-    SUPABASE_CLIENT --> REDIS
-    AUTH_SERVICE --> REDIS
-    
-    POSTGRES --> ENCRYPTION
-    AUTH_SERVICE --> SECRETS
-    MIDDLEWARE --> AUDIT
-    ROUTER --> FIREWALL
-    
-    MONITORING --> USER_SERVICE
-    MONITORING --> ORDER_SERVICE
-    MONITORING --> PAYMENT_SERVICE
+    UTILS --> CLIENT
+    LIB --> ADMIN_CLIENT
+    RAZORPAY_UTILS --> PAYMENT_API
 ```
 
 ## 🏛️ Architectural Layers
@@ -815,6 +710,397 @@ API Endpoints (/api/*)
     └── POST /utils/feedback              # Submit platform feedback
 ```
 
+## 🔄 Complete User Flow Diagrams
+
+### Student/Customer Complete Flow
+```mermaid
+flowchart TD
+    START([Student Visits Platform]) --> GUEST_CHECK{Is User Logged In?}
+    
+    GUEST_CHECK -->|No| REGISTER[Register Account]
+    GUEST_CHECK -->|Yes| BROWSE[Browse Available Cooks]
+    
+    REGISTER --> EMAIL_VERIFY{Email Verified?}
+    EMAIL_VERIFY -->|No| VERIFY_EMAIL[Check Email & Verify]
+    EMAIL_VERIFY -->|Yes| PROFILE_SETUP[Complete Student Profile]
+    VERIFY_EMAIL --> PROFILE_SETUP
+    
+    PROFILE_SETUP --> COLLEGE_INFO[Add College/Course Info]
+    COLLEGE_INFO --> DIETARY_PREF[Set Dietary Preferences]
+    DIETARY_PREF --> ADDRESSES[Add Delivery Addresses]
+    ADDRESSES --> BROWSE
+    
+    BROWSE --> LOCATION_CHECK{Location Services?}
+    LOCATION_CHECK -->|Enabled| NEARBY_COOKS[Show Nearby Cooks]
+    LOCATION_CHECK -->|Disabled| ALL_COOKS[Show All Cooks]
+    
+    NEARBY_COOKS --> FILTER_OPTIONS[Apply Filters]
+    ALL_COOKS --> FILTER_OPTIONS
+    FILTER_OPTIONS --> CUISINE_FILTER[Filter by Cuisine]
+    CUISINE_FILTER --> RATING_FILTER[Filter by Rating]
+    RATING_FILTER --> PRICE_FILTER[Filter by Price Range]
+    PRICE_FILTER --> COOK_LIST[Display Cook List]
+    
+    COOK_LIST --> SELECT_COOK[Select Cook]
+    SELECT_COOK --> COOK_VERIFY_CHECK{Cook Verified?}
+    COOK_VERIFY_CHECK -->|No| UNVERIFIED_MSG[Show Unverified Warning]
+    COOK_VERIFY_CHECK -->|Yes| VIEW_MENU[View Cook Menu]
+    UNVERIFIED_MSG --> VIEW_MENU
+    
+    VIEW_MENU --> MENU_AVAILABLE{Items Available?}
+    MENU_AVAILABLE -->|No| NO_ITEMS[Show No Items Message]
+    MENU_AVAILABLE -->|Yes| SELECT_ITEMS[Select Menu Items]
+    
+    SELECT_ITEMS --> QUANTITY[Choose Quantity]
+    QUANTITY --> CUSTOMIZATION[Add Special Instructions]
+    CUSTOMIZATION --> ADD_TO_CART[Add to Cart]
+    ADD_TO_CART --> CONTINUE_SHOPPING{Continue Shopping?}
+    
+    CONTINUE_SHOPPING -->|Yes| COOK_LIST
+    CONTINUE_SHOPPING -->|No| VIEW_CART[View Cart]
+    
+    VIEW_CART --> CART_EMPTY{Cart Empty?}
+    CART_EMPTY -->|Yes| BROWSE
+    CART_EMPTY -->|No| MODIFY_CART{Modify Cart?}
+    
+    MODIFY_CART -->|Yes| UPDATE_QUANTITIES[Update Item Quantities]
+    MODIFY_CART -->|No| PROCEED_CHECKOUT[Proceed to Checkout]
+    UPDATE_QUANTITIES --> REMOVE_ITEMS[Remove Items if Needed]
+    REMOVE_ITEMS --> VIEW_CART
+    
+    PROCEED_CHECKOUT --> ADDRESS_CHECK{Delivery Address Set?}
+    ADDRESS_CHECK -->|No| ADD_ADDRESS[Add Delivery Address]
+    ADDRESS_CHECK -->|Yes| DELIVERY_ZONE{In Delivery Zone?}
+    ADD_ADDRESS --> DELIVERY_ZONE
+    
+    DELIVERY_ZONE -->|No| OUT_OF_ZONE[Show Out of Zone Message]
+    DELIVERY_ZONE -->|Yes| CALCULATE_TOTAL[Calculate Total + Delivery Fee]
+    
+    CALCULATE_TOTAL --> PAYMENT_METHOD[Choose Payment Method]
+    PAYMENT_METHOD --> CREATE_ORDER[Create Order in Database]
+    CREATE_ORDER --> RAZORPAY_ORDER[Create Razorpay Order]
+    RAZORPAY_ORDER --> PAYMENT_UI[Show Payment Interface]
+    
+    PAYMENT_UI --> PAYMENT_PROCESS{Payment Successful?}
+    PAYMENT_PROCESS -->|No| PAYMENT_FAILED[Payment Failed]
+    PAYMENT_PROCESS -->|Yes| VERIFY_PAYMENT[Verify Payment with Razorpay]
+    
+    PAYMENT_FAILED --> RETRY_PAYMENT{Retry Payment?}
+    RETRY_PAYMENT -->|Yes| PAYMENT_UI
+    RETRY_PAYMENT -->|No| CANCEL_ORDER[Cancel Order]
+    
+    VERIFY_PAYMENT --> UPDATE_ORDER_STATUS[Update Order Status to 'Paid']
+    UPDATE_ORDER_STATUS --> NOTIFY_COOK[Send Real-time Notification to Cook]
+    NOTIFY_COOK --> ORDER_CONFIRMATION[Show Order Confirmation]
+    ORDER_CONFIRMATION --> TRACK_ORDER[Track Order Status]
+    
+    TRACK_ORDER --> ORDER_STATUS_CHECK{Check Order Status}
+    ORDER_STATUS_CHECK --> PENDING[Pending - Waiting for Cook]
+    ORDER_STATUS_CHECK --> ACCEPTED[Accepted - Cook Confirmed]
+    ORDER_STATUS_CHECK --> PREPARING[Preparing - Cooking in Progress]
+    ORDER_STATUS_CHECK --> READY[Ready - Pickup/Delivery]
+    ORDER_STATUS_CHECK --> DELIVERED[Delivered - Order Complete]
+    
+    DELIVERED --> RATE_COOK{Rate Cook?}
+    RATE_COOK -->|Yes| SUBMIT_RATING[Submit Rating & Review]
+    RATE_COOK -->|No| ORDER_HISTORY[View Order History]
+    SUBMIT_RATING --> ORDER_HISTORY
+    
+    ORDER_HISTORY --> REORDER{Reorder Same Items?}
+    REORDER -->|Yes| ADD_TO_CART
+    REORDER -->|No| PROFILE_MANAGE[Manage Profile]
+    
+    PROFILE_MANAGE --> UPDATE_INFO[Update Personal Info]
+    UPDATE_INFO --> CHANGE_PASSWORD[Change Password]
+    CHANGE_PASSWORD --> MANAGE_ADDRESSES[Manage Delivery Addresses]
+    MANAGE_ADDRESSES --> VIEW_PAST_ORDERS[View Past Orders]
+    VIEW_PAST_ORDERS --> LOGOUT[Logout]
+    
+    NO_ITEMS --> BROWSE
+    OUT_OF_ZONE --> BROWSE
+    CANCEL_ORDER --> BROWSE
+    LOGOUT --> START
+```
+
+### Cook Complete Flow
+```mermaid
+flowchart TD
+    COOK_START([Cook Visits Platform]) --> COOK_LOGIN_CHECK{Is Cook Logged In?}
+    
+    COOK_LOGIN_CHECK -->|No| COOK_REGISTER[Cook Registration]
+    COOK_LOGIN_CHECK -->|Yes| COOK_VERIFIED{Is Cook Verified?}
+    
+    COOK_REGISTER --> BASIC_INFO[Enter Basic Information]
+    BASIC_INFO --> BUSINESS_DETAILS[Add Business Details]
+    BUSINESS_DETAILS --> CUISINE_TYPE[Select Cuisine Specialization]
+    CUISINE_TYPE --> LOCATION_SETUP[Set Location & Delivery Areas]
+    LOCATION_SETUP --> UPLOAD_DOCS[Upload Verification Documents]
+    
+    UPLOAD_DOCS --> AADHAAR_UPLOAD[Upload Aadhaar Card]
+    AADHAAR_UPLOAD --> PAN_UPLOAD[Upload PAN Card]
+    PAN_UPLOAD --> FOOD_CERT[Upload Food Safety Certificate]
+    FOOD_CERT --> PROFILE_PHOTO[Upload Profile Photo]
+    PROFILE_PHOTO --> BANK_DETAILS[Add Bank Account Details]
+    
+    BANK_DETAILS --> ACCOUNT_HOLDER[Account Holder Name]
+    ACCOUNT_HOLDER --> ACCOUNT_NUMBER[Account Number]
+    ACCOUNT_NUMBER --> IFSC_CODE[IFSC Code]
+    IFSC_CODE --> BANK_NAME[Bank Name]
+    BANK_NAME --> SUBMIT_APPLICATION[Submit for Verification]
+    
+    SUBMIT_APPLICATION --> PENDING_VERIFICATION[Pending Admin Verification]
+    PENDING_VERIFICATION --> WAIT_APPROVAL[Wait for Approval]
+    WAIT_APPROVAL --> COOK_VERIFIED
+    
+    COOK_VERIFIED -->|No| VERIFICATION_STATUS[Check Verification Status]
+    COOK_VERIFIED -->|Yes| COOK_DASHBOARD[Access Cook Dashboard]
+    
+    VERIFICATION_STATUS --> DOCS_REJECTED{Documents Rejected?}
+    DOCS_REJECTED -->|Yes| RESUBMIT_DOCS[Resubmit Documents]
+    DOCS_REJECTED -->|No| WAIT_APPROVAL
+    RESUBMIT_DOCS --> UPLOAD_DOCS
+    
+    COOK_DASHBOARD --> DASHBOARD_OPTIONS{Choose Action}
+    DASHBOARD_OPTIONS --> MENU_MANAGEMENT[Manage Menu]
+    DASHBOARD_OPTIONS --> ORDER_MANAGEMENT[Manage Orders]
+    DASHBOARD_OPTIONS --> ANALYTICS_VIEW[View Analytics]
+    DASHBOARD_OPTIONS --> PROFILE_SETTINGS[Profile Settings]
+    DASHBOARD_OPTIONS --> PAYMENT_HISTORY[Payment History]
+    
+    MENU_MANAGEMENT --> MENU_EXISTS{Menu Items Exist?}
+    MENU_EXISTS -->|No| CREATE_FIRST_ITEM[Create First Menu Item]
+    MENU_EXISTS -->|Yes| MENU_ACTIONS{Menu Action}
+    
+    CREATE_FIRST_ITEM --> ITEM_NAME[Enter Item Name]
+    MENU_ACTIONS --> ADD_NEW_ITEM[Add New Item]
+    MENU_ACTIONS --> EDIT_EXISTING[Edit Existing Item]
+    MENU_ACTIONS --> DELETE_ITEM[Delete Item]
+    MENU_ACTIONS --> TOGGLE_AVAILABILITY[Toggle Availability]
+    
+    ADD_NEW_ITEM --> ITEM_NAME
+    ITEM_NAME --> ITEM_DESCRIPTION[Add Description]
+    ITEM_DESCRIPTION --> ITEM_PRICE[Set Price]
+    ITEM_PRICE --> PREP_TIME[Set Preparation Time]
+    PREP_TIME --> UPLOAD_IMAGE[Upload Item Image]
+    UPLOAD_IMAGE --> NUTRITIONAL_INFO[Add Nutritional Info (Optional)]
+    NUTRITIONAL_INFO --> SAVE_ITEM[Save Menu Item]
+    SAVE_ITEM --> MENU_MANAGEMENT
+    
+    EDIT_EXISTING --> UPDATE_DETAILS[Update Item Details]
+    UPDATE_DETAILS --> SAVE_CHANGES[Save Changes]
+    SAVE_CHANGES --> MENU_MANAGEMENT
+    
+    DELETE_ITEM --> CONFIRM_DELETE{Confirm Deletion?}
+    CONFIRM_DELETE -->|Yes| REMOVE_ITEM[Remove from Menu]
+    CONFIRM_DELETE -->|No| MENU_MANAGEMENT
+    REMOVE_ITEM --> MENU_MANAGEMENT
+    
+    TOGGLE_AVAILABILITY --> UPDATE_STATUS[Update Available Status]
+    UPDATE_STATUS --> MENU_MANAGEMENT
+    
+    ORDER_MANAGEMENT --> NEW_ORDERS{New Orders Available?}
+    NEW_ORDERS -->|No| NO_NEW_ORDERS[No New Orders]
+    NEW_ORDERS -->|Yes| ORDER_NOTIFICATION[Real-time Order Notification]
+    
+    ORDER_NOTIFICATION --> VIEW_ORDER_DETAILS[View Order Details]
+    VIEW_ORDER_DETAILS --> ORDER_DECISION{Accept Order?}
+    
+    ORDER_DECISION -->|No| REJECT_ORDER[Reject Order]
+    ORDER_DECISION -->|Yes| ACCEPT_ORDER[Accept Order]
+    
+    REJECT_ORDER --> REJECTION_REASON[Provide Rejection Reason]
+    REJECTION_REASON --> NOTIFY_CUSTOMER[Notify Customer]
+    NOTIFY_CUSTOMER --> ORDER_MANAGEMENT
+    
+    ACCEPT_ORDER --> UPDATE_STATUS_ACCEPTED[Update Status to 'Accepted']
+    UPDATE_STATUS_ACCEPTED --> START_PREPARATION[Start Food Preparation]
+    START_PREPARATION --> UPDATE_PREPARING[Update Status to 'Preparing']
+    UPDATE_PREPARING --> COOKING_PROCESS[Cooking in Progress]
+    
+    COOKING_PROCESS --> FOOD_READY{Food Ready?}
+    FOOD_READY -->|No| CONTINUE_COOKING[Continue Cooking]
+    FOOD_READY -->|Yes| UPDATE_READY[Update Status to 'Ready']
+    CONTINUE_COOKING --> COOKING_PROCESS
+    
+    UPDATE_READY --> DELIVERY_METHOD{Delivery Method}
+    DELIVERY_METHOD --> PICKUP[Customer Pickup]
+    DELIVERY_METHOD --> DELIVERY[Home Delivery]
+    
+    PICKUP --> CUSTOMER_ARRIVED{Customer Arrived?}
+    CUSTOMER_ARRIVED -->|No| WAIT_PICKUP[Wait for Customer]
+    CUSTOMER_ARRIVED -->|Yes| HAND_OVER[Hand Over Order]
+    WAIT_PICKUP --> CUSTOMER_ARRIVED
+    
+    DELIVERY --> DELIVERY_PERSON[Assign Delivery Person]
+    DELIVERY_PERSON --> OUT_FOR_DELIVERY[Out for Delivery]
+    OUT_FOR_DELIVERY --> DELIVERED_STATUS[Mark as Delivered]
+    
+    HAND_OVER --> DELIVERED_STATUS
+    DELIVERED_STATUS --> PAYMENT_PROCESSING[Process Cook Payment]
+    PAYMENT_PROCESSING --> ORDER_COMPLETE[Order Complete]
+    ORDER_COMPLETE --> ORDER_MANAGEMENT
+    
+    ANALYTICS_VIEW --> EARNINGS_CHART[View Earnings Chart]
+    EARNINGS_CHART --> ORDER_STATS[Order Statistics]
+    ORDER_STATS --> POPULAR_ITEMS[Popular Items Analysis]
+    POPULAR_ITEMS --> CUSTOMER_FEEDBACK[Customer Feedback Summary]
+    CUSTOMER_FEEDBACK --> PERFORMANCE_METRICS[Performance Metrics]
+    PERFORMANCE_METRICS --> COOK_DASHBOARD
+    
+    PROFILE_SETTINGS --> UPDATE_PROFILE[Update Cook Profile]
+    UPDATE_PROFILE --> CHANGE_CUISINE[Change Cuisine Type]
+    CHANGE_CUISINE --> UPDATE_LOCATION[Update Location]
+    UPDATE_LOCATION --> DELIVERY_AREAS[Update Delivery Areas]
+    DELIVERY_AREAS --> BUSINESS_HOURS[Set Business Hours]
+    BUSINESS_HOURS --> AVAILABILITY_CALENDAR[Set Availability Calendar]
+    AVAILABILITY_CALENDAR --> COOK_DASHBOARD
+    
+    PAYMENT_HISTORY --> VIEW_PAYMENTS[View Payment History]
+    VIEW_PAYMENTS --> PENDING_PAYMENTS[Check Pending Payments]
+    PENDING_PAYMENTS --> COMPLETED_PAYMENTS[View Completed Payments]
+    COMPLETED_PAYMENTS --> PAYMENT_DETAILS[Payment Details]
+    PAYMENT_DETAILS --> COOK_DASHBOARD
+    
+    NO_NEW_ORDERS --> REFRESH_ORDERS[Refresh Order List]
+    REFRESH_ORDERS --> ORDER_MANAGEMENT
+```
+
+### Admin Complete Flow
+```mermaid
+flowchart TD
+    ADMIN_START([Admin Accesses Platform]) --> ADMIN_AUTH{Admin Authenticated?}
+    
+    ADMIN_AUTH -->|No| ADMIN_LOGIN[Admin Login]
+    ADMIN_AUTH -->|Yes| ADMIN_ROLE_CHECK{Valid Admin Role?}
+    
+    ADMIN_LOGIN --> ADMIN_KEY[Enter Admin Key]
+    ADMIN_KEY --> KEY_VALIDATION{Valid Admin Key?}
+    KEY_VALIDATION -->|No| INVALID_KEY[Invalid Key Message]
+    KEY_VALIDATION -->|Yes| CREATE_ADMIN[Create Admin Account]
+    CREATE_ADMIN --> ADMIN_ROLE_CHECK
+    
+    ADMIN_ROLE_CHECK -->|No| UNAUTHORIZED[Unauthorized Access]
+    ADMIN_ROLE_CHECK -->|Yes| ADMIN_DASHBOARD[Admin Dashboard]
+    
+    ADMIN_DASHBOARD --> ADMIN_ACTIONS{Choose Admin Action}
+    ADMIN_ACTIONS --> USER_MANAGEMENT[User Management]
+    ADMIN_ACTIONS --> COOK_MANAGEMENT[Cook Management]
+    ADMIN_ACTIONS --> ORDER_OVERSIGHT[Order Oversight]
+    ADMIN_ACTIONS --> PAYMENT_MANAGEMENT[Payment Management]
+    ADMIN_ACTIONS --> SYSTEM_ANALYTICS[System Analytics]
+    ADMIN_ACTIONS --> PLATFORM_SETTINGS[Platform Settings]
+    
+    USER_MANAGEMENT --> VIEW_ALL_USERS[View All Users]
+    VIEW_ALL_USERS --> USER_FILTERS[Apply User Filters]
+    USER_FILTERS --> FILTER_BY_ROLE[Filter by Role (Student/Cook)]
+    FILTER_BY_ROLE --> FILTER_BY_STATUS[Filter by Status (Active/Inactive)]
+    FILTER_BY_STATUS --> FILTER_BY_DATE[Filter by Registration Date]
+    FILTER_BY_DATE --> USER_LIST[Display User List]
+    
+    USER_LIST --> SELECT_USER[Select Specific User]
+    SELECT_USER --> USER_DETAILS[View User Details]
+    USER_DETAILS --> USER_ACTIONS{User Action}
+    
+    USER_ACTIONS --> VIEW_USER_PROFILE[View Full Profile]
+    USER_ACTIONS --> EDIT_USER[Edit User Details]
+    USER_ACTIONS --> DEACTIVATE_USER[Deactivate User]
+    USER_ACTIONS --> DELETE_USER[Delete User Account]
+    USER_ACTIONS --> RESET_PASSWORD[Reset User Password]
+    USER_ACTIONS --> VIEW_USER_ORDERS[View User Orders]
+    
+    EDIT_USER --> UPDATE_USER_INFO[Update User Information]
+    UPDATE_USER_INFO --> SAVE_USER_CHANGES[Save Changes]
+    SAVE_USER_CHANGES --> USER_MANAGEMENT
+    
+    DEACTIVATE_USER --> DEACTIVATION_REASON[Provide Deactivation Reason]
+    DEACTIVATION_REASON --> CONFIRM_DEACTIVATION{Confirm Deactivation?}
+    CONFIRM_DEACTIVATION -->|Yes| DEACTIVATE_ACCOUNT[Deactivate Account]
+    CONFIRM_DEACTIVATION -->|No| USER_MANAGEMENT
+    DEACTIVATE_ACCOUNT --> NOTIFY_USER[Notify User of Deactivation]
+    NOTIFY_USER --> USER_MANAGEMENT
+    
+    COOK_MANAGEMENT --> COOK_VERIFICATION_QUEUE[Cook Verification Queue]
+    COOK_VERIFICATION_QUEUE --> PENDING_COOKS{Pending Verifications?}
+    PENDING_COOKS -->|No| NO_PENDING[No Pending Verifications]
+    PENDING_COOKS -->|Yes| REVIEW_COOK[Review Cook Application]
+    
+    REVIEW_COOK --> COOK_DOCUMENTS[Review Documents]
+    COOK_DOCUMENTS --> AADHAAR_VERIFICATION[Verify Aadhaar Card]
+    AADHAAR_VERIFICATION --> PAN_VERIFICATION[Verify PAN Card]
+    PAN_VERIFICATION --> FOOD_CERT_VERIFICATION[Verify Food Safety Certificate]
+    FOOD_CERT_VERIFICATION --> BANK_DETAILS_CHECK[Verify Bank Details]
+    BANK_DETAILS_CHECK --> PROFILE_REVIEW[Review Cook Profile]
+    
+    PROFILE_REVIEW --> VERIFICATION_DECISION{Approve Cook?}
+    VERIFICATION_DECISION -->|No| REJECT_COOK[Reject Cook Application]
+    VERIFICATION_DECISION -->|Yes| APPROVE_COOK[Approve Cook]
+    
+    REJECT_COOK --> REJECTION_FEEDBACK[Provide Rejection Reasons]
+    REJECTION_FEEDBACK --> NOTIFY_COOK_REJECTION[Notify Cook of Rejection]
+    NOTIFY_COOK_REJECTION --> COOK_MANAGEMENT
+    
+    APPROVE_COOK --> SET_VERIFIED_STATUS[Set Cook as Verified]
+    SET_VERIFIED_STATUS --> NOTIFY_COOK_APPROVAL[Notify Cook of Approval]
+    NOTIFY_COOK_APPROVAL --> COOK_MANAGEMENT
+    
+    ORDER_OVERSIGHT --> ALL_ORDERS[View All Orders]
+    ALL_ORDERS --> ORDER_FILTERS[Apply Order Filters]
+    ORDER_FILTERS --> FILTER_BY_STATUS[Filter by Order Status]
+    FILTER_BY_STATUS --> FILTER_BY_COOK[Filter by Cook]
+    FILTER_BY_COOK --> FILTER_BY_CUSTOMER[Filter by Customer]
+    FILTER_BY_CUSTOMER --> FILTER_BY_DATE_RANGE[Filter by Date Range]
+    FILTER_BY_DATE_RANGE --> ORDER_LIST[Display Order List]
+    
+    ORDER_LIST --> SELECT_ORDER[Select Specific Order]
+    SELECT_ORDER --> ORDER_DETAILS[View Order Details]
+    ORDER_DETAILS --> ORDER_ADMIN_ACTIONS{Order Actions}
+    
+    ORDER_ADMIN_ACTIONS --> VIEW_FULL_ORDER[View Full Order Details]
+    ORDER_ADMIN_ACTIONS --> CANCEL_ORDER[Cancel Order]
+    ORDER_ADMIN_ACTIONS --> REFUND_ORDER[Process Refund]
+    ORDER_ADMIN_ACTIONS --> CONTACT_PARTIES[Contact Cook/Customer]
+    ORDER_ADMIN_ACTIONS --> ORDER_DISPUTE[Handle Order Dispute]
+    
+    CANCEL_ORDER --> CANCELLATION_REASON[Provide Cancellation Reason]
+    CANCELLATION_REASON --> NOTIFY_PARTIES[Notify Cook and Customer]
+    NOTIFY_PARTIES --> PROCESS_REFUND_AUTO[Auto Process Refund]
+    PROCESS_REFUND_AUTO --> ORDER_OVERSIGHT
+    
+    PAYMENT_MANAGEMENT --> PAYMENT_OVERVIEW[Payment Overview]
+    PAYMENT_OVERVIEW --> FAILED_PAYMENTS[View Failed Payments]
+    FAILED_PAYMENTS --> PENDING_REFUNDS[View Pending Refunds]
+    PENDING_REFUNDS --> COOK_PAYOUTS[View Cook Payouts]
+    COOK_PAYOUTS --> TRANSACTION_LOGS[View Transaction Logs]
+    
+    TRANSACTION_LOGS --> PAYMENT_DISPUTES[Handle Payment Disputes]
+    PAYMENT_DISPUTES --> MANUAL_REFUND[Process Manual Refund]
+    MANUAL_REFUND --> REFUND_CONFIRMATION[Confirm Refund Processing]
+    REFUND_CONFIRMATION --> PAYMENT_MANAGEMENT
+    
+    SYSTEM_ANALYTICS --> PLATFORM_STATS[Platform Statistics]
+    PLATFORM_STATS --> USER_GROWTH[User Growth Analytics]
+    USER_GROWTH --> ORDER_ANALYTICS[Order Analytics]
+    ORDER_ANALYTICS --> REVENUE_ANALYTICS[Revenue Analytics]
+    REVENUE_ANALYTICS --> COOK_PERFORMANCE[Cook Performance Metrics]
+    COOK_PERFORMANCE --> POPULAR_CUISINES[Popular Cuisines Analysis]
+    POPULAR_CUISINES --> GEOGRAPHIC_DATA[Geographic Data Analysis]
+    GEOGRAPHIC_DATA --> GENERATE_REPORTS[Generate Business Reports]
+    GENERATE_REPORTS --> ADMIN_DASHBOARD
+    
+    PLATFORM_SETTINGS --> SYSTEM_CONFIG[System Configuration]
+    SYSTEM_CONFIG --> DELIVERY_FEES[Configure Delivery Fees]
+    DELIVERY_FEES --> COMMISSION_RATES[Set Commission Rates]
+    COMMISSION_RATES --> PLATFORM_POLICIES[Update Platform Policies]
+    PLATFORM_POLICIES --> EMAIL_TEMPLATES[Manage Email Templates]
+    EMAIL_TEMPLATES --> NOTIFICATION_SETTINGS[Notification Settings]
+    NOTIFICATION_SETTINGS --> ADMIN_USERS[Manage Admin Users]
+    ADMIN_USERS --> ADMIN_DASHBOARD
+    
+    NO_PENDING --> COOK_MANAGEMENT
+    INVALID_KEY --> ADMIN_START
+    UNAUTHORIZED --> ADMIN_START
+```
+
 ## 🔄 Advanced Data Flow Architecture
 
 ### Order Processing Data Flow
@@ -1179,345 +1465,200 @@ erDiagram
 - **CDN integration** for static assets
 - **Real-time subscriptions** with connection pooling
 
-## 🚀 Advanced Deployment & Infrastructure
+## 🚀 Simple Deployment Architecture (Reality Check)
 
-### Production Deployment Architecture
+### Your Actual Current Setup
 ```mermaid
 graph TB
-    subgraph "Global CDN Layer"
-        CDN[CloudFlare CDN<br/>Global Edge Locations]
-        CACHE[Edge Caching<br/>Static Assets & API Responses]
+    subgraph "Hosting"
+        NETLIFY[Netlify<br/>Static Site Hosting]
+        DOMAIN[Custom Domain<br/>campusdabba.com]
     end
     
-    subgraph "Load Balancing"
-        LB[Load Balancer<br/>Traffic Distribution]
-        SSL[SSL Termination<br/>HTTPS Encryption]
+    subgraph "Next.js App"
+        BUILD[Next.js Build<br/>Static + Serverless]
+        PAGES[Static Pages<br/>Pre-rendered]
+        API[API Routes<br/>Netlify Functions]
     end
     
-    subgraph "Application Tier - Multi-Region"
-        subgraph "Primary Region (US)"
-            APP1[Next.js App Instance 1<br/>Vercel/Netlify]
-            APP2[Next.js App Instance 2<br/>Auto-scaling]
-            APP3[Next.js App Instance 3<br/>Load Balanced]
-        end
-        
-        subgraph "Secondary Region (Asia)"
-            APP4[Next.js App Instance 4<br/>Failover Region]
-            APP5[Next.js App Instance 5<br/>Geographic Distribution]
-        end
+    subgraph "Supabase Cloud"
+        DB[(PostgreSQL Database<br/>Managed by Supabase)]
+        AUTH[Supabase Auth<br/>JWT Tokens]
+        STORAGE[Supabase Storage<br/>File Uploads]
+        REALTIME[Supabase Realtime<br/>WebSocket]
     end
     
-    subgraph "Backend Services"
-        SUPABASE_PRIMARY[Supabase Primary<br/>Main Database Cluster]
-        SUPABASE_REPLICA[Supabase Read Replica<br/>Read-only Queries]
-        REDIS_CLUSTER[Redis Cluster<br/>Session & Cache Data]
+    subgraph "External APIs"
+        RAZORPAY[Razorpay<br/>Payment Gateway]
+        MAPS[Google Maps<br/>Location Services]
     end
     
-    subgraph "External Services"
-        RAZORPAY[Razorpay Payment Gateway<br/>PCI DSS Compliant]
-        GOOGLE_SERVICES[Google Cloud Services<br/>Maps, Storage, AI]
-        EMAIL_SERVICE[SendGrid/AWS SES<br/>Transactional Emails]
-        SMS_SERVICE[Twilio/AWS SNS<br/>SMS & Voice]
-    end
+    NETLIFY --> BUILD
+    BUILD --> PAGES
+    BUILD --> API
     
-    subgraph "Monitoring & Analytics"
-        APM[Application Performance Monitoring<br/>New Relic/DataDog]
-        LOGS[Centralized Logging<br/>ELK Stack/CloudWatch]
-        METRICS[Business Metrics<br/>Analytics Dashboard]
-        ALERTS[Alert Management<br/>PagerDuty/Slack]
-    end
+    API --> DB
+    API --> AUTH
+    API --> STORAGE
+    API --> REALTIME
     
-    CDN --> LB
-    LB --> SSL
-    SSL --> APP1
-    SSL --> APP2
-    SSL --> APP3
-    SSL --> APP4
-    SSL --> APP5
+    API --> RAZORPAY
+    API --> MAPS
     
-    APP1 --> SUPABASE_PRIMARY
-    APP2 --> SUPABASE_PRIMARY
-    APP3 --> SUPABASE_REPLICA
-    APP4 --> SUPABASE_REPLICA
-    APP5 --> SUPABASE_REPLICA
-    
-    APP1 --> REDIS_CLUSTER
-    APP2 --> REDIS_CLUSTER
-    
-    APP1 --> RAZORPAY
-    APP1 --> GOOGLE_SERVICES
-    APP1 --> EMAIL_SERVICE
-    APP1 --> SMS_SERVICE
-    
-    APP1 --> APM
-    APP1 --> LOGS
-    APP1 --> METRICS
-    APM --> ALERTS
+    DOMAIN --> NETLIFY
 ```
 
-### Performance Optimization Architecture
-```mermaid
-graph TB
-    subgraph "Frontend Performance"
-        SSG[Static Site Generation<br/>Pre-built Pages]
-        ISR[Incremental Static Regeneration<br/>Dynamic Updates]
-        CODE_SPLIT[Code Splitting<br/>Lazy Loading]
-        IMAGE_OPT[Image Optimization<br/>Next.js Image Component]
-        PREFETCH[Route Prefetching<br/>Predictive Loading]
-    end
-    
-    subgraph "API Performance"
-        CACHE_STRATEGY[Caching Strategy<br/>Multi-level Caching]
-        EDGE_FUNCTIONS[Edge Functions<br/>Geo-distributed Processing]
-        CONNECTION_POOL[Connection Pooling<br/>Database Optimization]
-        RATE_LIMIT[Rate Limiting<br/>API Protection]
-    end
-    
-    subgraph "Database Performance"
-        INDEXING[Optimized Indexing<br/>Query Performance]
-        PARTITIONING[Table Partitioning<br/>Large Dataset Handling]
-        REPLICATION[Read Replicas<br/>Load Distribution]
-        QUERY_OPT[Query Optimization<br/>Efficient SQL]
-    end
-    
-    subgraph "Caching Layers"
-        BROWSER_CACHE[Browser Cache<br/>Client-side Caching]
-        CDN_CACHE[CDN Cache<br/>Edge Caching]
-        API_CACHE[API Cache<br/>Redis/Memcached]
-        DB_CACHE[Database Cache<br/>Query Result Caching]
-    end
-    
-    SSG --> BROWSER_CACHE
-    ISR --> CDN_CACHE
-    CODE_SPLIT --> PREFETCH
-    IMAGE_OPT --> CDN_CACHE
-    
-    EDGE_FUNCTIONS --> CDN_CACHE
-    CONNECTION_POOL --> REPLICATION
-    RATE_LIMIT --> API_CACHE
-    
-    INDEXING --> QUERY_OPT
-    PARTITIONING --> REPLICATION
-    
-    API_CACHE --> DB_CACHE
+### Environment Configuration (What You Actually Have)
+```yaml
+Development:
+  - npm run dev: Local development server
+  - localhost:3000: Development URL
+  - .env.local: Local environment variables
+
+Production:
+  - Netlify Build: Automatic deployment
+  - netlify.toml: Build configuration
+  - Environment Variables: Set in Netlify dashboard
+
+Configuration Files:
+  - next.config.mjs: Next.js settings
+  - tailwind.config.ts: Tailwind configuration
+  - tsconfig.json: TypeScript settings
+  - components.json: ShadCN configuration
 ```
 
-### Security Architecture
-```mermaid
-graph TB
-    subgraph "Network Security"
-        WAF[Web Application Firewall<br/>Attack Protection]
-        DDoS[DDoS Protection<br/>Traffic Filtering]
-        SSL_TLS[SSL/TLS Encryption<br/>Data in Transit]
-        VPN[VPN Access<br/>Admin Operations]
-    end
-    
-    subgraph "Application Security"
-        AUTH_LAYER[Authentication Layer<br/>JWT + OAuth]
-        RBAC[Role-Based Access Control<br/>Permission Management]
-        INPUT_VAL[Input Validation<br/>SQL Injection Prevention]
-        CSRF[CSRF Protection<br/>Cross-site Request Forgery]
-        XSS[XSS Protection<br/>Cross-site Scripting]
-    end
-    
-    subgraph "Data Security"
-        ENCRYPTION[Data Encryption<br/>AES-256 Encryption]
-        KEY_MGMT[Key Management<br/>AWS KMS/HashiCorp Vault]
-        BACKUP_SEC[Secure Backups<br/>Encrypted Storage]
-        AUDIT_LOG[Audit Logging<br/>Security Event Tracking]
-    end
-    
-    subgraph "Payment Security"
-        PCI_DSS[PCI DSS Compliance<br/>Payment Card Industry]
-        TOKENIZATION[Card Tokenization<br/>Secure Payment Storage]
-        FRAUD_DETECT[Fraud Detection<br/>Transaction Monitoring]
-        SECURE_API[Secure Payment APIs<br/>Razorpay Integration]
-    end
-    
-    subgraph "Monitoring & Compliance"
-        SIEM[Security Information<br/>Event Management]
-        COMPLIANCE[Compliance Monitoring<br/>GDPR, SOC2]
-        VULNERABILITY[Vulnerability Scanning<br/>Security Assessment]
-        INCIDENT[Incident Response<br/>Security Breach Protocol]
-    end
-    
-    WAF --> AUTH_LAYER
-    DDoS --> SSL_TLS
-    
-    AUTH_LAYER --> RBAC
-    RBAC --> INPUT_VAL
-    INPUT_VAL --> CSRF
-    CSRF --> XSS
-    
-    ENCRYPTION --> KEY_MGMT
-    KEY_MGMT --> BACKUP_SEC
-    BACKUP_SEC --> AUDIT_LOG
-    
-    PCI_DSS --> TOKENIZATION
-    TOKENIZATION --> FRAUD_DETECT
-    FRAUD_DETECT --> SECURE_API
-    
-    SIEM --> COMPLIANCE
-    COMPLIANCE --> VULNERABILITY
-    VULNERABILITY --> INCIDENT
+### Simple Security Model (No Over-Engineering)
+```yaml
+Authentication:
+  - Supabase Auth: Handles everything
+  - JWT Tokens: Automatic management
+  - Row Level Security: Database-level protection
+
+Data Protection:
+  - RLS Policies: User can only see their data
+  - Environment Variables: Secure API keys
+  - HTTPS: Automatic via Netlify
+
+Payment Security:
+  - Razorpay: PCI compliant gateway
+  - Webhook verification: Payment confirmation
+  - Test mode: Safe development
 ```
 
-### Scalability & High Availability
-```mermaid
-graph TB
-    subgraph "Horizontal Scaling"
-        AUTO_SCALE[Auto Scaling Groups<br/>Dynamic Instance Management]
-        LOAD_BALANCE[Load Balancing<br/>Traffic Distribution]
-        MICROSERVICES[Microservices Architecture<br/>Service Isolation]
-        CONTAINER[Containerization<br/>Docker/Kubernetes]
-    end
-    
-    subgraph "Database Scaling"
-        SHARDING[Database Sharding<br/>Horizontal Partitioning]
-        READ_REPLICA[Read Replicas<br/>Read Load Distribution]
-        WRITE_SPLIT[Write Splitting<br/>Master-Slave Setup]
-        CACHE_LAYER[Caching Layer<br/>Redis Cluster]
-    end
-    
-    subgraph "High Availability"
-        MULTI_AZ[Multi-AZ Deployment<br/>Availability Zones]
-        FAILOVER[Automatic Failover<br/>Disaster Recovery]
-        BACKUP[Automated Backups<br/>Point-in-time Recovery]
-        HEALTH_CHECK[Health Checks<br/>Service Monitoring]
-    end
-    
-    subgraph "Performance Monitoring"
-        METRICS[Real-time Metrics<br/>Performance Tracking]
-        ALERTING[Intelligent Alerting<br/>Proactive Monitoring]
-        LOGGING[Distributed Logging<br/>Error Tracking]
-        TRACING[Request Tracing<br/>Performance Analysis]
-    end
-    
-    AUTO_SCALE --> LOAD_BALANCE
-    LOAD_BALANCE --> MICROSERVICES
-    MICROSERVICES --> CONTAINER
-    
-    SHARDING --> READ_REPLICA
-    READ_REPLICA --> WRITE_SPLIT
-    WRITE_SPLIT --> CACHE_LAYER
-    
-    MULTI_AZ --> FAILOVER
-    FAILOVER --> BACKUP
-    BACKUP --> HEALTH_CHECK
-    
-    METRICS --> ALERTING
-    ALERTING --> LOGGING
-    LOGGING --> TRACING
+### What You're Planning vs Reality
+```yaml
+CURRENT REALITY:
+  ✅ Next.js 14 with App Router
+  ✅ Supabase for backend
+  ✅ Razorpay for payments
+  ✅ Netlify for hosting
+  ✅ Basic authentication
+  ✅ File uploads
+  ✅ Real-time updates
+
+FUTURE PLANS (Not Built Yet):
+  🔄 React Native mobile app
+  🔄 AI chatbot integration
+  🔄 Advanced analytics
+  🔄 SMS notifications
+  🔄 Advanced admin features
+  🔄 Performance optimizations
+  🔄 Load balancing
+  🔄 Caching layers
 ```
 
-## 📊 Technology Stack Deep Dive
+## 📊 Actual Technology Stack (What You Really Use)
 
 ### Frontend Technology Stack
 ```yaml
 Core Framework:
   - Next.js 14: React framework with App Router
-  - React 18: UI library with concurrent features
+  - React 18: UI library 
   - TypeScript: Type-safe development
 
 Styling & UI:
   - Tailwind CSS: Utility-first CSS framework
   - ShadCN UI: Accessible component library
-  - Radix UI: Primitive components
-  - Lucide Icons: Icon library
-  - CSS Modules: Component-scoped styling
+  - Radix UI: Primitive components (@radix-ui/*)
+  - Lucide React: Icon library
+  - Tailwind Animate: Animation utilities
+  - Next Themes: Theme management
 
 State Management:
-  - React Context: Global state management
+  - React Context: Global state (auth, cart, theme)
   - React Hook Form: Form state management
-  - SWR/React Query: Server state management
-  - Zustand: Lightweight state management
+  - React Hooks: Built-in state management
+
+Charts & Visualization:
+  - Recharts: Chart library for analytics
+  - Embla Carousel: Carousel component
+
+Form & Input:
+  - React Hook Form: Form handling
+  - Zod: Schema validation
+  - Input OTP: OTP input component
+  - React Day Picker: Date selection
 
 Development Tools:
-  - ESLint: Code linting
-  - Prettier: Code formatting
-  - Husky: Git hooks
-  - Lint-staged: Pre-commit linting
+  - TypeScript: Type checking
+  - PostCSS: CSS processing
+  - Autoprefixer: CSS vendor prefixes
 ```
 
 ### Backend Technology Stack
 ```yaml
 Backend Services:
-  - Supabase: Backend-as-a-Service platform
-  - PostgreSQL: Primary database
-  - Row Level Security: Data access control
-  - Real-time: WebSocket subscriptions
-
-Authentication:
-  - Supabase Auth: JWT-based authentication
-  - OAuth Providers: Google, GitHub integration
-  - Email/Password: Traditional auth method
-  - Magic Links: Passwordless authentication
+  - Supabase: Complete backend platform
+  - PostgreSQL: Database (via Supabase)
+  - Supabase Auth: Authentication system
+  - Supabase Storage: File storage
+  - Supabase Realtime: Live updates
 
 Payment Processing:
-  - Razorpay: Payment gateway
-  - Webhook Verification: Secure payment confirmation
-  - Refund Management: Automated refund processing
-  - Test Mode: Development payment testing
+  - Razorpay: Payment gateway SDK
+  - Webhook Verification: Payment confirmation
 
-File Storage:
-  - Supabase Storage: Object storage
-  - Image Optimization: Automatic image processing
-  - CDN Integration: Global content delivery
-  - Access Control: Secure file access
+API Layer:
+  - Next.js API Routes: Serverless functions
+  - Next.js Middleware: Route protection
+
+File Structure:
+  - utils/supabase/: Client configurations
+  - lib/supabase-admin.ts: Admin operations
+  - types/: TypeScript definitions
 ```
 
-### Infrastructure & DevOps
+### Infrastructure & Deployment (Current)
 ```yaml
-Hosting & Deployment:
-  - Vercel: Frontend hosting platform
-  - Netlify: Alternative hosting option
+Hosting:
+  - Netlify: Frontend hosting (based on netlify.toml)
   - Supabase Cloud: Backend infrastructure
-  - GitHub Actions: CI/CD pipeline
 
-Monitoring & Analytics:
-  - Vercel Analytics: Performance monitoring
-  - Supabase Analytics: Database monitoring
-  - Google Analytics: User behavior tracking
-  - Error Tracking: Application error monitoring
+Configuration:
+  - Environment Variables: Secure config
+  - netlify.toml: Deployment configuration
+  - next.config.mjs: Next.js configuration
 
-Security:
-  - HTTPS/SSL: Encrypted communication
-  - Environment Variables: Secure configuration
-  - API Rate Limiting: Abuse prevention
-  - Input Validation: Security best practices
-
-Performance:
-  - Code Splitting: Optimized loading
-  - Image Optimization: Automatic image processing
-  - Caching: Multi-level caching strategy
-  - Compression: Response optimization
+Development:
+  - Local Development: next dev
+  - Build Process: next build
+  - TypeScript: Compile-time checking
 ```
 
-### Development Workflow
+### What You DON'T Have (Yet)
 ```yaml
-Version Control:
-  - Git: Source code management
-  - GitHub: Repository hosting
-  - Branching Strategy: GitFlow workflow
-  - Pull Requests: Code review process
-
-Development Environment:
-  - VS Code: Primary IDE
-  - Extensions: TypeScript, ESLint, Prettier
-  - Dev Server: Next.js development server
-  - Hot Reload: Instant code updates
-
-Testing Strategy:
-  - Unit Tests: Component testing
-  - Integration Tests: API testing
-  - E2E Tests: User journey testing
-  - Manual Testing: Quality assurance
-
-Deployment Process:
-  - Preview Deployments: Branch deployments
-  - Production Deployment: Main branch auto-deploy
-  - Environment Variables: Secure configuration
-  - Database Migrations: Schema updates
+NOT IMPLEMENTED:
+  - Redis: No caching layer
+  - Microservices: Monolithic Next.js app
+  - Kubernetes: Simple hosting setup
+  - Docker: No containerization
+  - CI/CD Pipeline: Basic deployment
+  - Advanced Monitoring: Basic error tracking
+  - Load Balancers: Single instance
+  - Multiple Environments: Simple dev/prod
+  - SMS Service: Email only
+  - AI Chatbot: Not implemented yet
+  - Mobile App: Web only
 ```
 
 ## 🔮 Future Enhancements
