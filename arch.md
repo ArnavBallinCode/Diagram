@@ -141,7 +141,7 @@ graph TB
         POSTGRES[(PostgreSQL Database<br/>15+ Tables)]
         RLS[Row Level Security<br/>User-based Access]
         TRIGGERS[Database Triggers<br/>Auto-calculations]
-        FUNCTIONS[Stored Functions<br/>is_admin, etc.)]
+        FUNCTIONS[Stored Functions<br/>is_admin and others]
     end
     
     subgraph "File Structure You Actually Have"
@@ -721,11 +721,11 @@ flowchart TD
     GUEST_CHECK -->|Yes| BROWSE[Browse Available Cooks]
     
     REGISTER --> EMAIL_VERIFY{Email Verified?}
-    EMAIL_VERIFY -->|No| VERIFY_EMAIL[Check Email & Verify]
+    EMAIL_VERIFY -->|No| VERIFY_EMAIL[Check Email and Verify]
     EMAIL_VERIFY -->|Yes| PROFILE_SETUP[Complete Student Profile]
     VERIFY_EMAIL --> PROFILE_SETUP
     
-    PROFILE_SETUP --> COLLEGE_INFO[Add College/Course Info]
+    PROFILE_SETUP --> COLLEGE_INFO[Add College Course Info]
     COLLEGE_INFO --> DIETARY_PREF[Set Dietary Preferences]
     DIETARY_PREF --> ADDRESSES[Add Delivery Addresses]
     ADDRESSES --> BROWSE
@@ -774,7 +774,7 @@ flowchart TD
     ADD_ADDRESS --> DELIVERY_ZONE
     
     DELIVERY_ZONE -->|No| OUT_OF_ZONE[Show Out of Zone Message]
-    DELIVERY_ZONE -->|Yes| CALCULATE_TOTAL[Calculate Total + Delivery Fee]
+    DELIVERY_ZONE -->|Yes| CALCULATE_TOTAL[Calculate Total plus Delivery Fee]
     
     CALCULATE_TOTAL --> PAYMENT_METHOD[Choose Payment Method]
     PAYMENT_METHOD --> CREATE_ORDER[Create Order in Database]
@@ -789,7 +789,7 @@ flowchart TD
     RETRY_PAYMENT -->|Yes| PAYMENT_UI
     RETRY_PAYMENT -->|No| CANCEL_ORDER[Cancel Order]
     
-    VERIFY_PAYMENT --> UPDATE_ORDER_STATUS[Update Order Status to 'Paid']
+    VERIFY_PAYMENT --> UPDATE_ORDER_STATUS[Update Order Status to Paid]
     UPDATE_ORDER_STATUS --> NOTIFY_COOK[Send Real-time Notification to Cook]
     NOTIFY_COOK --> ORDER_CONFIRMATION[Show Order Confirmation]
     ORDER_CONFIRMATION --> TRACK_ORDER[Track Order Status]
@@ -798,11 +798,11 @@ flowchart TD
     ORDER_STATUS_CHECK --> PENDING[Pending - Waiting for Cook]
     ORDER_STATUS_CHECK --> ACCEPTED[Accepted - Cook Confirmed]
     ORDER_STATUS_CHECK --> PREPARING[Preparing - Cooking in Progress]
-    ORDER_STATUS_CHECK --> READY[Ready - Pickup/Delivery]
+    ORDER_STATUS_CHECK --> READY[Ready - Pickup or Delivery]
     ORDER_STATUS_CHECK --> DELIVERED[Delivered - Order Complete]
     
     DELIVERED --> RATE_COOK{Rate Cook?}
-    RATE_COOK -->|Yes| SUBMIT_RATING[Submit Rating & Review]
+    RATE_COOK -->|Yes| SUBMIT_RATING[Submit Rating and Review]
     RATE_COOK -->|No| ORDER_HISTORY[View Order History]
     SUBMIT_RATING --> ORDER_HISTORY
     
@@ -882,7 +882,7 @@ flowchart TD
     ITEM_DESCRIPTION --> ITEM_PRICE[Set Price]
     ITEM_PRICE --> PREP_TIME[Set Preparation Time]
     PREP_TIME --> UPLOAD_IMAGE[Upload Item Image]
-    UPLOAD_IMAGE --> NUTRITIONAL_INFO[Add Nutritional Info (Optional)]
+    UPLOAD_IMAGE --> NUTRITIONAL_INFO[Add Nutritional Info Optional]
     NUTRITIONAL_INFO --> SAVE_ITEM[Save Menu Item]
     SAVE_ITEM --> MENU_MANAGEMENT
     
@@ -912,14 +912,14 @@ flowchart TD
     REJECTION_REASON --> NOTIFY_CUSTOMER[Notify Customer]
     NOTIFY_CUSTOMER --> ORDER_MANAGEMENT
     
-    ACCEPT_ORDER --> UPDATE_STATUS_ACCEPTED[Update Status to 'Accepted']
+    ACCEPT_ORDER --> UPDATE_STATUS_ACCEPTED[Update Status to Accepted]
     UPDATE_STATUS_ACCEPTED --> START_PREPARATION[Start Food Preparation]
-    START_PREPARATION --> UPDATE_PREPARING[Update Status to 'Preparing']
+    START_PREPARATION --> UPDATE_PREPARING[Update Status to Preparing]
     UPDATE_PREPARING --> COOKING_PROCESS[Cooking in Progress]
     
     COOKING_PROCESS --> FOOD_READY{Food Ready?}
     FOOD_READY -->|No| CONTINUE_COOKING[Continue Cooking]
-    FOOD_READY -->|Yes| UPDATE_READY[Update Status to 'Ready']
+    FOOD_READY -->|Yes| UPDATE_READY[Update Status to Ready]
     CONTINUE_COOKING --> COOKING_PROCESS
     
     UPDATE_READY --> DELIVERY_METHOD{Delivery Method}
@@ -992,8 +992,8 @@ flowchart TD
     
     USER_MANAGEMENT --> VIEW_ALL_USERS[View All Users]
     VIEW_ALL_USERS --> USER_FILTERS[Apply User Filters]
-    USER_FILTERS --> FILTER_BY_ROLE[Filter by Role (Student/Cook)]
-    FILTER_BY_ROLE --> FILTER_BY_STATUS[Filter by Status (Active/Inactive)]
+    USER_FILTERS --> FILTER_BY_ROLE[Filter by Role Student or Cook]
+    FILTER_BY_ROLE --> FILTER_BY_STATUS[Filter by Status Active or Inactive]
     FILTER_BY_STATUS --> FILTER_BY_DATE[Filter by Registration Date]
     FILTER_BY_DATE --> USER_LIST[Display User List]
     
@@ -1136,7 +1136,7 @@ sequenceDiagram
     F->>R: Initialize Razorpay checkout
     S->>R: Complete payment
     R->>A: Payment webhook (POST /api/razorpay/verify)
-    A->>DB: Update order status = 'paid'
+    A->>DB: Update order status = paid
     A->>DB: Insert payment record
     
     A->>N: Trigger cook notification
@@ -1145,7 +1145,7 @@ sequenceDiagram
     F-->>S: Order confirmation page
     
     C->>A: Accept order (PATCH /api/cook/orders)
-    A->>DB: Update order status = 'accepted'
+    A->>DB: Update order status = accepted
     A->>N: Notify student of acceptance
     N->>S: Real-time status update
     
